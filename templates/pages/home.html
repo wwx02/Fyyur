@@ -1,25 +1,117 @@
 {% extends 'layouts/main.html' %}
 {% block title %}Fyyur{% endblock %}
+{% block links %}
+    {{ super() }}
+    <style>
+        .p {
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -100px;
+        }
+    </style>
+{% endblock %}
 {% block content %}
-<div class="row">
-	<div class="col-sm-6">
-		<h1>Fyyur 🔥</h1>
-		<p class="lead">Where musical artists meet musical venues.</p>
-		<h3>
-			<a href="/venues"><button class="btn btn-primary btn-lg">Find a venue</button></a>
-			<a href="/venues/create"><button class="btn btn-default btn-lg">Post a venue</button></a>
-		</h3>
-		<h3>
-			<a href="/artists"><button class="btn btn-primary btn-lg">Find an artist</button></a>
-			<a href="/artists/create"><button class="btn btn-default btn-lg">Post an artist</button></a>
-		</h3>
-		<p class="lead">Publicize about your show for free.</p>
-		<h3>
-			<a href="/shows/create"><button class="btn btn-default btn-lg">Post a show</button></a>
-		</h3>
-	</div>
-	<div class="col-sm-6 hidden-sm hidden-xs">
-		<img id="front-splash" src="{{ url_for('static',filename='img/front-splash.jpg') }}" alt="Front Photo of Musical Band" />
-	</div>
-</div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <h1>Fyyur 🔥</h1>
+            <p class="lead">Where musical artists meet musical venues.</p>
+            <h3>
+                <a href="/venues">
+                    <button class="btn btn-primary btn-lg">Find a venue</button>
+                </a>
+                <a href="/venues/create">
+                    <button class="btn btn-default btn-lg">Post a venue</button>
+                </a>
+            </h3>
+            <h3>
+                <a href="/artists">
+                    <button class="btn btn-primary btn-lg">Find an artist</button>
+                </a>
+                <a href="/artists/create">
+                    <button class="btn btn-default btn-lg">Post an artist</button>
+                </a>
+            </h3>
+            <p class="lead">Publicize about your show for free.</p>
+            <h3>
+                <a href="/shows/create">
+                    <button class="btn btn-default btn-lg">Post a show</button>
+                </a>
+            </h3>
+        </div>
+        <div class="col-sm-6 hidden-sm hidden-xs">
+            <img id="front-splash" src="{{ url_for('static',filename='img/front-splash.jpg') }}"
+                 alt="Front Photo of Musical Band"/>
+        </div>
+    </div>
+
+    <br><br>
+    <div class="row">
+        <h3>Recently added Venues</h3>
+        <div id="venue" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                {% for i in range(venues|length) %}
+                    <li style="background-color:orange" data-target="#venue" data-slide-to="{{ i }}"
+                        class="{% if i==0 %}active{% endif %}"></li>
+                {% endfor %}
+            </ol>
+            <div class="carousel-inner" role="listbox">
+                {% for venue in venues %}
+                    <div class="item {% if loop.index==1 %}active{% endif %}">
+                        <div class="col-9 align-self-center">
+                            <div class="tile tile-show">
+                                {% if venue.image_link %}
+                                    <img src=" {{ venue.image_link }}">
+                                {% endif %}
+                                <h5><a href="/venues/{{ venue.id }}">{{ venue.name }}</a></h5>
+                                <h3>{{ venue.city }}, {{ venue.state }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <a class="left carousel-control" href="#venue" role="button" data-slide="prev">
+                <span style="color:orange" class="p" aria-hidden="true"><<</span>
+            </a>
+            <a class="right carousel-control" href="#venue" role="button" data-slide="next">
+                <span style="color:orange" class="p" aria-hidden="true">>></span>
+            </a>
+        </div>
+    </div>
+    <br><br>
+    <div class="row">
+        <h3>Recently added Artists</h3>
+        <div id="artist" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                {% for i in range(artists|length) %}
+                    <li style="background-color:orange" data-target="#artist" data-slide-to="{{ i }}"
+                        class="{% if i==0 %}active{% endif %}"></li>
+                {% endfor %}
+            </ol>
+            <div class="carousel-inner" role="listbox">
+                {% for artist in artists %}
+                    <div class="item {% if loop.index==1 %}active{% endif %}">
+                        <div class="col-9 align-self-center">
+                            <div class="tile tile-show">
+                                {% if artist.image_link %}
+                                    <img src=" {{ artist.image_link }}">
+                                {% endif %}
+                                <h5><a href="/venues/{{ artist.id }}">{{ artist.name }}</a></h5>
+                                <h3>{{ artist.city }}, {{ artist.state }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <a class="left carousel-control" href="#artist" role="button" data-slide="prev">
+                <span style="color:orange" class="p" aria-hidden="true"><<</span>
+            </a>
+            <a class="right carousel-control" href="#artist" role="button" data-slide="next">
+                <span style="color:orange" class="p" aria-hidden="true">>></span>
+            </a>
+        </div>
+    </div>
 {% endblock %}

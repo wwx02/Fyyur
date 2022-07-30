@@ -2,7 +2,7 @@
 <head>
 <meta charset="utf-8">
 <title>{% block title %}{% endblock %}</title>
-
+{% block links %}
 <!-- meta -->
 <meta name="description" content="">
 <meta name="author" content="">
@@ -33,6 +33,7 @@
 <script type="text/javascript" src="/static/js/script.js" defer></script>
 <!--[if lt IE 9]><script src="/static/js/libs/respond-1.4.2.min.js"></script><![endif]-->
 <!-- /scripts -->
+{% endblock %}
 </head>
 <body>
 
@@ -72,6 +73,16 @@
                   type="search"
                   name="search_term"
                   placeholder="Find an artist"
+                  aria-label="Search">
+              </form>
+              {% endif %}
+              {% if (request.endpoint == 'show') or
+                (request.endpoint == 'shows') %}
+              <form class="search" method="post" action="/shows/search">
+                <input class="form-control"
+                  type="search"
+                  name="search_term"
+                  placeholder="Find a show (date or location)"
                   aria-label="Search">
               </form>
               {% endif %}
