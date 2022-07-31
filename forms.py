@@ -1,7 +1,8 @@
+import re
 from datetime import datetime
 from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
-from wtforms.validators import DataRequired, AnyOf, URL, Regexp
+from wtforms.validators import DataRequired, AnyOf, URL, Regexp, ValidationError, Optional
 
 
 class ShowForm(Form):
@@ -84,7 +85,7 @@ class VenueForm(Form):
         'address', validators=[DataRequired()]
     )
     phone = StringField(
-        'phone', validators=[Regexp(regex="(\d{3})-(\d{3})-(\d{4})", message="invalid phone number")]
+        'phone', validators=[Optional(), Regexp(regex="(\d{3})-(\d{3})-(\d{4})", message="invalid phone number")]
     )
     image_link = StringField(
         'image_link'
@@ -115,10 +116,10 @@ class VenueForm(Form):
         ]
     )
     facebook_link = StringField(
-        'facebook_link', validators=[URL()]
+        'facebook_link', validators=[Optional(), URL()]
     )
     website_link = StringField(
-        'website_link'
+        'website_link', validators=[Optional(), URL()]
     )
 
     seeking_talent = BooleanField( 'seeking_talent' )
@@ -193,15 +194,44 @@ class ArtistForm(Form):
     )
     phone = StringField(
         # TODO implement validation logic for state
-        'phone', validators=[Regexp("(\d{3})-(\d{3})-(\d{4})", message="invalid phone number")]
+        'phone', validators=[Optional(), Regexp("(\d{3})-(\d{3})-(\d{4})", message="invalid phone number")]
     )
     image_link = StringField(
         'image_link'
     )
 
     availability = StringField(
-        'availability'
+        'availability', validators=[Optional()]
     )
+
+    def validate_availability(self, field):
+        error = False
+        s = "(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])"
+        s = s + "-" + s
+        list = re.split(s, field.data)
+        list = [x.strip() for x in list]
+        list = [x for x in list if x != '']
+        try:
+            for x in list:
+                x = int(x)
+        except:
+            error = True
+
+        if len(list)<4:
+            x = len(list)
+        else:
+            x= len(list)-3
+
+        for i in range(0, x, 4):
+            if list[i + 2] < list[i]:
+                error = True
+
+            if (list[i + 2] == list[i]) and (list[i + 1] > list[i + 3]):
+                print(list[i])
+                error = True
+
+        if error == True:
+            raise ValidationError('Invalid availability time. Please write as HH:mm-HH:mm')
 
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],
@@ -229,11 +259,11 @@ class ArtistForm(Form):
      )
     facebook_link = StringField(
         # TODO implement enum restriction
-        'facebook_link', validators=[URL()]
+        'facebook_link', validators=[Optional(), URL()]
      )
 
     website_link = StringField(
-        'website_link'
+        'website_link', validators=[Optional(), URL()]
      )
 
     seeking_venue = BooleanField( 'seeking_venue' )
